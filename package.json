@@ -1,0 +1,36 @@
+{
+  "name": "building-map",
+  "version": "1.0.0",
+  "description": "ComIT - React Course - Final Project.",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nasrodrigo/building-map.git"
+  },
+  "author": "Rodrigo Nascimento",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nasrodrigo/building-map/issues"
+  },
+  "homepage": "https://github.com/nasrodrigo/building-map#readme",
+  "devDependencies": {
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-scripts": "^2.0.5"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1"
+  }
+}

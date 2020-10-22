@@ -1,0 +1,49 @@
+@import url("main.css");
+
+html, 
+body{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+header{
+    height: 47px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+}
+.search-container{
+    display: flex;
+    align-items: center;
+    border: 1px solid #dfe1e5;
+    border-radius: 25px;
+    padding: 10px;
+    background: #fafbfc;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.search-container input{
+    margin: 0 10px 0 10px;
+    width: 250px;
+    border: none;
+    background: #fafbfc;
+}
+.search-container input:focus, 
+.search-button:focus{
+    outline: none;
+}
+.search-button{
+    height: 25px;
+    width: auto;
+    border: none;
+    background: rgb(0, 0, 0, 0.0);
+}
+main{
+    height: 100%;
+    width: 100%;
+}
+.module{
+    height: 100%;
+    background-image: url("../images/floor-plant.gif");
+}
