@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import classes from './MapSearch.module.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 
-const mapSearch = () => {
-    
+const MapSearch = () => {
     return <header>
             <form action="#" method="GET">
-                <div className="search-container">
+                <div className={classes.searchContainer}>
                     <input type="text" name="search-input" />
-                    <button className="search-button"><i className="fas fa-search fa-lg"></i></button>
+                    <button className={classes.searchButton}><i className="fas fa-search fa-lg"></i></button>
                 </div>
             </form>
         </header>;
-    
 }
 
-export default mapSearch;
+export default MapSearch;

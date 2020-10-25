@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
-import Person from './Person/Person'
+import React from 'react';
+import MapSearch from './Map/MapSearch';
+import Map from './Map/Map';
 
-const app = promps => {
-    const [personsState] = useState(
-        {
-            persons: [
-                {name:"Rodrigo", age:"36"},
-                {name:"Sofia", age:"9"},
-                {name:"Patricia", age:"34"}
-            ]
-        }
-    );
-
-    
-    return ( personsState.persons.map( p => <Person name={p.name} age={p.age}/> ));
-    
+const app = () => {
+    return <div>
+                <MapSearch/> 
+                <Map/>
+            </div>;
 }
 
 export default app;
