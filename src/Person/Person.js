@@ -1,7 +1,8 @@
 import React from "react";
+import '@fortawesome/fontawesome-free/css/all.css';
 
-const person = (promps) => {
-return <p>Hi I'm {promps.name} my age is {promps.age}</p>
+const Person = (promps) => {
+    
 };
 
-export default person;
+export default Person;

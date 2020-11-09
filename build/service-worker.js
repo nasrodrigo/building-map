@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/nasrodrigo/building-map/precache-manifest.1110671659ef14c1f1cc9ba9713556c0.js"
+  "/nasrodrigo/building-map/precache-manifest.e7a5d4a24164c83dbd663ad3480cfa10.js"
 );
 
 workbox.clientsClaim();
