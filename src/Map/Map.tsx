@@ -1,59 +1,92 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MapImg from '../img/floor-plant.gif';
 import Marker from '@fortawesome/fontawesome-free/svgs/solid/map-marker-alt.svg';
+import Person, { PersonForm, Coordinate, possition } from '../Person/Person';
+import PersonData from '../Person/PersonData';
+import MapSearch from '../Map/MapSearch';
 
-interface CanvasProps {
-    width: number;
-    height: number;
+interface Canvas {
+    width?: number;
+    height?: number;
+    canvas?: HTMLCanvasElement;
+    context?: CanvasRenderingContext2D;
+    scale?: number;
+    translate?: Coordinate;
+};
+
+interface IPersonList {
+    personListState?: [Person];
+    updatePersonList: (personList: [Person]) => void;
 }
 
-type Canvas = {
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    scale: number;
-    translate: Coordinate;
-}
+let person: Person = {
+    firstName: undefined,
+    lastName: undefined,
+    contact: undefined,
+    possition: undefined,
+};
 
-type Coordinate = {
-    x: number;
-    y: number;
-}
+export const MapPersonListContext = React.createContext<IPersonList>({personListState: [person], updatePersonList: ([Person]) => void {}});
 
-const Map = ({ width, height }: CanvasProps) => {
+const Map = ({ width, height }: Canvas) => {
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const zoomInRef = useRef<HTMLButtonElement>(null);
-    const zoomOutRef = useRef<HTMLButtonElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const zoomInRef = useRef<HTMLButtonElement | null>(null);
+    const zoomOutRef = useRef<HTMLButtonElement | null>(null);
+    const personFormRef = useRef<HTMLDivElement | null>(null);
 
     const scaleMultiplier: number = 0.8;
-    const scale = {value: 0.3};
     const translate: Coordinate = {x: window.innerWidth / 2, y: window.innerHeight / 2};
     const moveCoordinate: Coordinate = {x: 0, y:0};
     const mouseDown = {value: false};
+
+    const [personListState, setPersonListState] = useState<[Person]>([person]);
+    let [scaleState, setScaleState] = useState<number>(0.3);
+    let [showPersonFormState, setShowPersonFormState] = useState<boolean>(false);
+    //const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
+
+    const updatePersonList = (personList: [Person]) => {
+
+        if(!personListState){
+            return;
+        }
+
+        for(let key in personList){
+            personListState.push(personList[key]);
+        }
+
+        
+
+        console.log(personListState);
+    }
 
     const setMouseDownFalse = () => {
         mouseDown.value = false;
     }
 
-    const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
-    
-    const [mapImageState] = useState(
-        () => {
-            const mapImg = new Image();
-            mapImg.src = MapImg;
-            return mapImg
-        }
-    );
+    // const [mapImageState, setMapImageState] = useState<HTMLImageElement>(
+    //     () => {
+    //         const mapImg: HTMLImageElement = new Image();
+    //         mapImg.src = MapImg;
+    //         return mapImg;
+    //     }
+    // );
 
-    const [markerImageState] = useState(
-        () => {
-            const markerImg = new Image();
-            markerImg.src = Marker;
-            return markerImg;
-        }
-    );
+    // const [markerImageState, setMarkerImageState] = useState<HTMLImageElement>(
+    //     () => {
+    //         const markerImg: HTMLImageElement = new Image();
+    //         markerImg.src = Marker;
+    //         return markerImg;
+    //     }
+    // );
 
-    const getCanvas = () => {
+    const mapImg: HTMLImageElement = new Image();
+    mapImg.src = MapImg;
+
+    const markerImg: HTMLImageElement = new Image();
+    markerImg.src = Marker;
+
+   const getCanvas = () => {
         if (!canvasRef.current) {
             return;
         }
@@ -64,17 +97,28 @@ const Map = ({ width, height }: CanvasProps) => {
         if(!context){
             return;
         }
-        
-        const cvn: Canvas = {canvas: canvas, 
-                            context: context, 
-                            scale: scale.value,
-                            translate: translate,
-                            };
 
-        return cvn;
-    };
-
+        return {
+            canvas: canvas, 
+            context: context, 
+            scale: scaleState,
+            translate: translate
+        };
+    }
+    
     const draw = (props: Canvas) => {
+
+        if(!props.canvas){
+            return;
+        }
+
+        if(!props.context){
+            return;
+        }
+
+        if(!props.translate){
+            return;
+        }
 
         const canvas = props.canvas;
         const context = props.context;
@@ -83,12 +127,12 @@ const Map = ({ width, height }: CanvasProps) => {
 
         context.save();
         context.translate(props.translate.x, props.translate.y);
-        context.scale(props.scale, props.scale);
+        context.scale(scaleState, scaleState);
         context.beginPath();
 
-        const x = -mapImageState.width / 2;
-        const y = -mapImageState.height / 2;
-        context.drawImage(mapImageState, x, y);
+        const x = -mapImg.width / 2;
+        const y = -mapImg.height / 2;
+        context.drawImage(mapImg, x, y);
 
         context.restore();
     
@@ -101,10 +145,8 @@ const Map = ({ width, height }: CanvasProps) => {
         if(!canvas){
             return;
         }
-        
-        window.onload = () => {
-            draw(canvas);
-        }
+
+        draw(canvas);
 
     }, []);
 
@@ -116,8 +158,9 @@ const Map = ({ width, height }: CanvasProps) => {
             return;
         }
 
-        canvas.scale = scale.value /= scaleMultiplier;
+        setScaleState(scaleState /= scaleMultiplier);
 
+        canvas.scale = scaleState;
         draw(canvas);
 
     };
@@ -146,8 +189,9 @@ const Map = ({ width, height }: CanvasProps) => {
             return;
         }
 
-        canvas.scale = scale.value *= scaleMultiplier;
+        setScaleState(scaleState = scaleState *= scaleMultiplier);
 
+        canvas.scale = scaleState;
         draw(canvas);
 
     };
@@ -169,11 +213,16 @@ const Map = ({ width, height }: CanvasProps) => {
     }, []);
 
     const contentPossitionHandle = (props: any) => {
+        
         mouseDown.value = true;
 
         const canvas = getCanvas();
 
         if(!canvas){
+            return;
+        }
+
+        if(!canvas.translate){
             return;
         }
 
@@ -193,9 +242,14 @@ const Map = ({ width, height }: CanvasProps) => {
     }, []);
 
     const newContentPossitionHandle = (props: any) => {
+        
         const canvas = getCanvas();
 
         if(!canvas){
+            return;
+        }
+
+        if(!canvas.translate){
             return;
         }
 
@@ -225,20 +279,75 @@ const Map = ({ width, height }: CanvasProps) => {
 
     }, []);
 
-    const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
-        if (!canvasRef.current) {
+    const drawMarker = (props: any) => {
+
+        const canvas = getCanvas();
+
+        if(!canvas){
             return;
         }
 
-        const canvas: HTMLCanvasElement = canvasRef.current;
-        return { x: event.pageX - canvas.offsetLeft, y: event.pageY - canvas.offsetTop };
+        if(!canvas.canvas){
+            return;
+        }
+
+        if(!canvas.context){
+            return;
+        }
+
+        possition.x = props.offsetX;
+        possition.y = props.offsetY;
+
+        const rect = canvas.canvas.getBoundingClientRect();
+
+        const mouseXPos = props.clientX - rect.left;
+        const mouseYPos = props.clientY - rect.top;
+
+        const w = markerImg.width / 4;
+        const h = markerImg.height / 4;
+        const x = mouseXPos - (w / 2);
+        const y = mouseYPos - h;
+
+        canvas.context.drawImage(markerImg, x, y, w, h);
+
+        setShowPersonFormState(showPersonFormState = true);
+        personFormHandle();
     };
 
+    const personFormHandle = () => {
+        if (!personFormRef.current) {
+            return;
+        }
+
+        if(showPersonFormState){
+            personFormRef.current.style.display = "block";
+        }        
+
+    }
+
+    useEffect(() => {
+
+        if (!canvasRef.current) {
+            return;
+        }
+        const canvas: HTMLCanvasElement = canvasRef.current;
+        canvas.addEventListener('dblclick', drawMarker);
+        return () => {
+            canvas.removeEventListener('dblclick', drawMarker);
+        };
+
+    }, []);
 
     return <div>
+                <MapSearch/> 
                 <div style={{display:'flex', justifyContent:'center', margin:'10px'}}>
                     <button ref={zoomInRef}>+</button>
                     <button ref={zoomOutRef}>-</button>
+                </div>
+                <div ref={personFormRef} style={{display:"none"}}>
+                <MapPersonListContext.Provider value={{personListState : personListState, updatePersonList : updatePersonList}}>
+                    <PersonForm />
+                </MapPersonListContext.Provider>
                 </div>
                 <canvas ref={canvasRef} height={height} width={width} />
             </div>;
