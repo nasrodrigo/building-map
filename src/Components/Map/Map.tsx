@@ -1,23 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
+import { useHistory } from "react-router-dom";
 import Canvas, { canvas } from "../../Interfaces/Canvas";
-import { Coordinate, possition } from "../../Interfaces/Person";
+import Person, { Coordinate, possition, person } from "../../Interfaces/Person";
+import PersonForm from "../../Components/Person/PersonForm";
 
+import MapSearch from "./MapSearch";
 import MapZoom from "./MapZoom";
 
 import MapImg from "../../img/floor-plant.gif";
+import Marker from '@fortawesome/fontawesome-free/svgs/solid/map-marker-alt.svg';
+import classes from "./Map.module.css";
+
+interface DrawMapProps{
+    scale: number,
+    translateX: number,
+    translateY: number
+}
 
 const Map = ({ width, height }: Canvas) => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const personFormRef = useRef<HTMLDivElement>(null);
+    const personInfoRef = useRef<HTMLDivElement>(null);
+
+    const history = useHistory();
 
     const [canvasState, setCanvasState] = useState<Canvas>(canvas);
-    const [scaleUpdated, setScaleUpdated] = useState<number>(0);
-
+    const [personListState, setPersonListState] = useState<Person[]>([]);
+    const [possitionState, setPossitionState] = useState<Coordinate>(possition);
+    const [personInfoState, setPersonInfoState] = useState<Person>(person);
+    const [idToDeleteState, setIdToDeleteState] = useState<string>('');
+    
     const moveCoordinate: Coordinate = possition;
     let mouseDown = false;
-
+    
     const mapImg: HTMLImageElement = new Image();
     mapImg.src = MapImg;
+
+    const markerImg: HTMLImageElement = new Image();
+    markerImg.src = Marker;
 
     const getCanvas = () => {
 
@@ -37,7 +58,11 @@ const Map = ({ width, height }: Canvas) => {
                 canvas: htmlCanvasElement,
                 context: context,
                 scale: 0.3,
-                translate: {x: window.innerWidth / 2, y: window.innerHeight / 2}
+                translate: {x: window.innerWidth / 2, 
+                            y: window.innerHeight / 2,
+                            scale: 0,
+                            imgBase64: ''
+                            }
             }
         )
 
@@ -49,12 +74,14 @@ const Map = ({ width, height }: Canvas) => {
 
     }, []);
 
-    const drawMap = () => {
+    const drawMap = (props: DrawMapProps = 
+        {
+            scale: 0,
+            translateX: 0,
+            translateY: 0
+        }
+    ) => {
 
-        if(!canvasState){
-            return;
-        }  
-        
         if(!canvasState.canvas){
             return;
         } 
@@ -62,7 +89,7 @@ const Map = ({ width, height }: Canvas) => {
         if(!canvasState.context){
             return;
         } 
-
+        
         if(!canvasState.translate){
             return;
         } 
@@ -71,14 +98,18 @@ const Map = ({ width, height }: Canvas) => {
             return;
         } 
 
-        const canvas = canvasState.canvas;
-        const context = canvasState.context;
+        const canvas: HTMLCanvasElement = canvasState.canvas;
+        const context: CanvasRenderingContext2D = canvasState.context;
 
+        
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         context.save();
-        context.translate(canvasState.translate.x, canvasState.translate.y);
-        context.scale(canvasState.scale, canvasState.scale);
+        context.translate(
+            props.translateX === 0? canvasState.translate.x : props.translateX, 
+            props.translateY === 0? canvasState.translate.y : props.translateY
+        );
+        props.scale === 0? context.scale(canvasState.scale, canvasState.scale) : context.scale(props.scale, props.scale);
         context.beginPath();
 
         const x = -mapImg.width / 2;
@@ -86,9 +117,9 @@ const Map = ({ width, height }: Canvas) => {
         context.drawImage(mapImg, x, y);
 
         context.restore();
-    
-    }
 
+    }
+    
     useEffect(() => {
 
         window.onload = () => {
@@ -97,73 +128,258 @@ const Map = ({ width, height }: Canvas) => {
 
     }, [canvasState]);
 
-    const zoomHandle = (scale: number) => {
+    const zoomHandler = (scale: number) => {
+
         canvasState.scale = scale;
+
         drawMap();
+
     }
 
-    const setMouseDownFalse = () => {
-        mouseDown = false;
-    }
+    // const contentPossitionHandler: any = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        
+    //     mouseDown = true;
+        
+    //     if(!canvasState.translate){
+    //         return;
+    //     }
 
-    const contentPossitionHandle: any = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    //     moveCoordinate.x = event.clientX - canvasState.translate.x;
+    //     moveCoordinate.y = event.clientY - canvasState.translate.y;
+
+    // };
+
+    // useEffect(() => {
+    //     if (!canvasRef.current) {
+    //         return;
+    //     }
+    //     const canvas: HTMLCanvasElement = canvasRef.current;
+    //     canvas.addEventListener('mousedown', contentPossitionHandler);
+    //     return () => {
+    //         canvas.removeEventListener('mousedown', contentPossitionHandler);
+    //     };
+    // }, [canvasState]);
+
+    // const newContentPossitionHandler: any = (event: React.MouseEvent<HTMLCanvasElement>) => {
+
+    //     if(!canvasState.translate){
+    //         return;
+    //     }
         
-        mouseDown = true;
+    //     if(mouseDown){
+    //         canvasState.translate.x = event.clientX - moveCoordinate.x;
+    //         canvasState.translate.y = event.clientY - moveCoordinate.y;
+    //         drawMap();
+    //     }
+    // };
+
+    // const setMouseDownFalse = () => {
+    //     mouseDown = false;
+    // }
+
+    // useEffect(() => {
+
+    //     if (!canvasRef.current) {
+    //         return;
+    //     }
+    //     const canvas: HTMLCanvasElement = canvasRef.current;
+    //     canvas.addEventListener('mousemove', newContentPossitionHandler);
+    //     canvas.addEventListener('mouseup', setMouseDownFalse);
+    //     canvas.addEventListener('mouseover', setMouseDownFalse);
+    //     canvas.addEventListener('mouseout', setMouseDownFalse);
+    //     return () => {
+    //         canvas.removeEventListener('mousemove', newContentPossitionHandler);
+    //         canvas.addEventListener('mouseup', setMouseDownFalse);
+    //         canvas.addEventListener('mouseover', setMouseDownFalse);
+    //         canvas.addEventListener('mouseout', setMouseDownFalse);
+    //     };
+
+    // }, [canvasState]);
+
+    const addPersonHandler = (event: any) => {
+
+        if(!canvasState.canvas){
+            return;
+        } 
         
-        if(!canvasState.translate){
+        if(!canvasState.context){
+            return;
+        } 
+
+        if(!canvasState.scale){
             return;
         }
 
-        moveCoordinate.x = event.clientX - canvasState.translate.x;
-        moveCoordinate.y = event.clientY - canvasState.translate.y;
+        const canvas = canvasState.canvas;
+        const context = canvasState.context;
+        
+        possition.x = event.offsetX;
+        possition.y = event.offsetY;
 
-    };
+        const rect = canvas.getBoundingClientRect();
 
+        const mouseXPos = event.clientX - rect.left;
+        const mouseYPos = event.clientY - rect.top;
+
+        const w = markerImg.width / 4;
+        const h = markerImg.height / 4;
+        const x = mouseXPos - (w / 2);
+        const y = mouseYPos - h;
+
+        possitionState.scale = canvasState.scale;
+        
+        setPossitionState(
+            {
+                ...possitionState,
+                x: event.offsetX,
+                y: event.offsetX
+            }
+        );
+
+        context.drawImage(markerImg, x, y, w, h);
+
+        showPersonForm(true);
+
+    }
+    
     useEffect(() => {
+
         if (!canvasRef.current) {
             return;
         }
         const canvas: HTMLCanvasElement = canvasRef.current;
-        canvas.addEventListener('mousedown', contentPossitionHandle);
+        canvas.addEventListener('dblclick', addPersonHandler);
         return () => {
-            canvas.removeEventListener('mousedown', contentPossitionHandle);
+            canvas.removeEventListener('dblclick', addPersonHandler);
         };
+
     }, [canvasState]);
 
-    const newContentPossitionHandle: any = (event: React.MouseEvent<HTMLCanvasElement>) => {
-
-        if(!canvasState.translate){
+    const drawSearchResult = (value: string) => {
+        console.log("started drawSearch");
+        if(!canvasState.canvas){
             return;
-        }
+        } 
         
-        if(mouseDown){
-            canvasState.translate.x = event.clientX - moveCoordinate.x;
-            canvasState.translate.y = event.clientY - moveCoordinate.y;
-            drawMap();
-        }
-    };
+        if(!canvasState.context){
+            return;
+        } 
+        
+        console.log("verify drawSearch");
+        const canvas = canvasState.canvas;
+        const context = canvasState.context;
 
-    useEffect(() => {
+        personListState.forEach(person => {
+            
+            if(person.firstName + ' ' + person.lastName === value){
 
-        if (!canvasRef.current) {
+                setPersonInfoState({...person});
+
+                const w = markerImg.width / 4;
+                const h = markerImg.height / 4;
+                const x = person.possition.x;
+                const y = person.possition.y;
+
+                const drawMapProps: DrawMapProps = {
+                    scale : person.possition.scale,
+                    translateX: 0,
+                    translateY: 0 
+                };
+
+                drawMap(drawMapProps);
+                context.drawImage(markerImg, x, y, w, h);
+
+            }
+            
+        });
+
+        showPersonInfo(true);
+    }
+
+    const showFormFilled = () => {
+
+        showPersonInfo(false);
+        showPersonForm(true);
+
+    }
+
+    const removePersonHandler = (event: React.FormEvent<HTMLFormElement>) => {
+
+        if(!personInfoState.id){
             return;
         }
-        const canvas: HTMLCanvasElement = canvasRef.current;
-        canvas.addEventListener('mousemove', newContentPossitionHandle);
-        canvas.addEventListener('mouseup', setMouseDownFalse);
-        canvas.addEventListener('mouseover', setMouseDownFalse);
-        canvas.addEventListener('mouseout', setMouseDownFalse);
-        return () => {
-            canvas.removeEventListener('mousemove', newContentPossitionHandle);
-            canvas.addEventListener('mouseup', setMouseDownFalse);
-            canvas.addEventListener('mouseover', setMouseDownFalse);
-            canvas.addEventListener('mouseout', setMouseDownFalse);
-        };
 
-    }, [canvasState]);
+        setIdToDeleteState(personInfoState.id);
+
+        showPersonInfo(false);
+
+        showPersonForm(true);
+
+
+    }
+
+    const personInfoHandler = () => {
+
+        if(!personInfoState){
+            return;
+        }
+
+        if(!personInfoState.contact){
+            return;
+        }
+
+        if(!personInfoState.contact.phone){
+            return;
+        }
+
+        return <div className={classes.personInfo}>
+                    <h3>{personInfoState.firstName + " " + personInfoState.lastName}</h3>
+                    <a><b>Contact</b></a>
+                    <a>Email: {personInfoState.contact.email}</a>
+                    <a>{personInfoState.contact.phone.phoneType + ": " + personInfoState.contact.phone.phoneNumber}</a>
+                    <form onSubmit={removePersonHandler}>
+                        <button type="submit">Remove Person</button>
+                        <button onClick={showFormFilled} type="button">Update Person</button>
+                    </form>
+
+            </div>
+
+    }
+
+    const showPersonForm = (show: boolean) => {
+
+        if(!personFormRef.current){
+            return;
+        }
+
+        show? personFormRef.current.style.display = "block" : personFormRef.current.style.display = "none";
+
+    }
+
+    const showPersonInfo = (show: boolean) => {
+
+        if(!personInfoRef.current){
+            return;
+        }
+
+        show? personInfoRef.current.style.display = "block" : personInfoRef.current.style.display = "none";
+
+    }
 
     return <>
-                <MapZoom zoomHandle={zoomHandle}/>
+                <header>
+                    <MapSearch formSubmit={drawSearchResult} personList={personListState}/>
+                    <MapZoom zoomHandler={zoomHandler}/>
+                </header>
+                <div ref={personFormRef} className={classes.hideContent}>
+                    <PersonForm setPersonListState={setPersonListState}
+                                showPersonForm={showPersonForm}
+                                personUpdate={personInfoState}
+                                personRemove={idToDeleteState}/>
+                </div>
+                <div ref={personInfoRef} className={classes.hideContent}>
+                    {personInfoHandler()}
+                </div>
                 <canvas ref={canvasRef} height={height} width={width} />
             </>
 

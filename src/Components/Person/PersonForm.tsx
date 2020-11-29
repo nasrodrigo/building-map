@@ -1,17 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import Person, { Contact, Phone, Coordinate, person, contact, possition, phone } from "../../Interfaces/Person";
-import { addPerson } from "../../Services/PersonService/PersonService";
+import firebase from "../../firebase";
 
 import classes from "./Person.module.css";
 
-const PersonForm = () => {
+interface FeedbackMessage {
+    msg: string,
+    color: string
+}
 
+const PersonForm = (props: any) => {
+
+    const feedbackMessage = useRef<HTMLDivElement>(null);
+    
     const [personState, setPersonState] = useState<Person>(person);
     const [contactState, setContactState] = useState<Contact>(contact);
-    const [possitionState, setPossitionState] = useState<Coordinate>(possition);
     const [phoneState, setPhoneState] = useState<Phone>(phone);
+    const [feedbackMessageState, setFeedbackMessageState] = useState<FeedbackMessage>({msg: "", color: ""});
+    
+    useEffect(() => {
+
+        if(props.personUpdate.id) setPersonState(props.personUpdate);
+
+    }, [props.personUpdate]);
 
     const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+        console.log(props.person);
 
         for(let key in personState){
             if(key === event.target.name){
@@ -48,75 +64,166 @@ const PersonForm = () => {
                     ...personState,
                     contact: contactState
                 });
-            }else if(event.target.name === 'possitionX'){
-                possitionState.x = +event.target.value;
-                setPossitionState({
-                    ...possitionState
-                });
-                setPersonState({
-                    ...personState,
-                    possition: possitionState
-                });
-            }else if(event.target.name === 'possitionY'){
-                possitionState.y = +event.target.value
-                setPossitionState({
-                    ...possitionState
-                });
-                setPersonState({
-                    ...personState,
-                    possition: possitionState
-                });
             }
 
         } 
 
     }
 
-    const addPersonHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    const removePersonHandler = (id: string) => {
 
-        event.preventDefault;
-
-        if(!person){
+        if(!feedbackMessage.current){
             return;
         }
 
-        addPerson(personState);
+        firebase.ref("/person").child(id).remove();
+        setFeedbackMessageState({msg: "Removed successfully", color: "blue"});
+        feedbackMessage.current.style.display = "block";
+        setTimeout(() => {props.showPersonForm(false)}, 2000);
+
+    }
+
+    useEffect(() => {
+
+        if(props.personRemove) removePersonHandler(props.personRemove);
+
+    }, [props.personRemove]);
+
+    const addPersonHandler = (event: React.FormEvent<HTMLFormElement>) => {
+
+        if(!personState){
+            return;
+        }
+
+        if(!feedbackMessage.current){
+            return;
+        }
+
+        if(personState.id){
+            firebase.ref("/person").child(personState.id).set(personState);
+            return
+        }
+
+        if(!personState.firstName && !personState.lastName){
+            event.preventDefault();
+            setFeedbackMessageState({msg: "Fields first and last name must be filled", color: "red"});
+            feedbackMessage.current.style.display = "block";
+            return;            
+        }
+
+        if(personState.contact? !personState.contact.email : false){
+            event.preventDefault();
+            setFeedbackMessageState({msg: "Fields email must be filled", color: "red"});
+            feedbackMessage.current.style.display = "block";
+            return;            
+        }
+
+        try {
+            event.preventDefault();
+            firebase.ref("/person").push().set(personState);
+            setFeedbackMessageState({msg: "Saved successfully", color: "blue"});
+            feedbackMessage.current.style.display = "block";
+            setTimeout(() => {props.showPersonForm(false)}, 2000);
+        } catch (error) {
+            event.preventDefault();
+            setFeedbackMessageState({msg: "Error", color: "red"});
+            feedbackMessage.current.style.display = "block";
+        }
         
     }
 
+    const listPersonHandler = () => {
+
+        const results = firebase.ref('/person').on('value', data => {
+            if(!data.val()){
+                return;
+            }
+
+            let personData = data.val(); 
+            let person: Person;
+            let listPerson: Person[] = [];
+
+            for(const key in personData){
+                person = personData[key];
+                person.id = key;
+                listPerson.push(person);
+                props.setPersonListState([...listPerson]);
+            }
+
+        });
+
+    }
+
+    useEffect(() => {
+
+        listPersonHandler();
+
+    }, []);
+
+    const btnCancelHandler = () => {
+
+        setFeedbackMessageState({msg: "", color: ""});
+        
+        props.showPersonForm(false);
+    }
+
     return <>
-                <form className={classes.personForm} onSubmit={addPersonHandler}>
-                    <div>
-                        <label htmlFor="name">Name </label>
-                        <input type="text" name="firstName" value={personState.firstName} onChange={inputChangeHandler} id="first-name" placeholder="Name" title="Field name"/>
-                    </div>
-                    <div>
-                        <label htmlFor="name">Name </label>
-                        <input type="text" name="lastName" value={personState.lastName} onChange={inputChangeHandler} id="last-name" placeholder="Name" title="Field name"/>
-                    </div>
-                    <div>
-                        <label htmlFor="email">Email </label>
-                        <input type="text" name="email" value={personState.contact? personState.contact.email : undefined} onChange={inputChangeHandler} id="email" placeholder="Email" title="Field email"/>
-                    </div>
-                    <div>
-                        <label htmlFor="phone-type">Phone Type</label>
-                        <select name="phoneType" value={contactState.phone?contactState.phone.phoneType : undefined} onChange={inputChangeHandler}>
-                            <option value="phone">Phone</option>
-                            <option value="cellphone">Cell Phone</option>
-                        </select>
-                        <label htmlFor="phone">Phone </label>
-                        <input type="phone" value={contactState.phone?contactState.phone.phoneNumber : undefined} onChange={inputChangeHandler} name="phoneNumber" id="phone" placeholder="Phone" title="Field phone"/>
-                    </div>
-                    {/* <div className={classes.hideContent}> */}
-                    <div>
-                        <input name="possitionX" value={personState.possition? personState.possition.x : undefined} readOnly/>
-                        <input name="possitionY" value={personState.possition? personState.possition.y : undefined} readOnly/>
-                    </div>
-                    <div>
-                        <button type="submit" title="Button submit person">submit</button>
-                    </div>
-                </form>
-            </>
+            <form className={classes.personForm} onSubmit={addPersonHandler}>
+                <div ref={feedbackMessage} className={classes.feedbackMessage}>
+                    <a style={{color: feedbackMessageState? feedbackMessageState.color : undefined}}>{feedbackMessageState? feedbackMessageState.msg : undefined}</a>
+                </div>
+                <div>
+                    <input type="text" 
+                        name="firstName" 
+                        value={personState.firstName} 
+                        onChange={inputChangeHandler} 
+                        id="first-name" 
+                        placeholder="First Name *" 
+                        title="Field name"/>
+                </div>
+                <div>
+                    <input type="text" 
+                        name="lastName" 
+                        value={personState.lastName} 
+                        onChange={inputChangeHandler} 
+                        id="last-name" 
+                        placeholder="Last Name *" 
+                        title="Field name"/>
+                </div>
+                <div>
+                    <input type="text" 
+                        name="email" value={personState.contact? personState.contact.email : undefined} 
+                        onChange={inputChangeHandler} 
+                        id="email" 
+                        placeholder="Email *" 
+                        title="Field email"/>
+                </div>
+                <div>
+                    <select name="phoneType" value={personState.contact? personState.contact.phone? personState.contact.phone.phoneType : undefined : contactState.phone? contactState.phone.phoneType : undefined} 
+                    onChange={inputChangeHandler}>
+                        <option value="phone">Phone</option>
+                        <option value="cellphone">Cell Phone</option>
+                    </select>
+                    <input type="phone" 
+                        value={personState.contact? personState.contact.phone? personState.contact.phone.phoneNumber : undefined : contactState.phone? contactState.phone.phoneNumber : undefined} 
+                        onChange={inputChangeHandler} 
+                        name="phoneNumber" 
+                        id="phone" 
+                        placeholder="Phone number" 
+                        title="Field phone"/>
+                </div>
+                {/* <div className={classes.hideContent}>
+                    <input name="personId" value={personState.id? personState.id : undefined} readOnly/>
+                    <input name="possitionX" value={personState.possition? personState.possition.x : undefined} readOnly/>
+                    <input name="possitionY" value={personState.possition? personState.possition.y : undefined} readOnly/>
+                    <input name="scale" value={personState.possition? personState.possition.scale : undefined} readOnly/>
+                </div> */}
+                <div>
+                    <button onClick={btnCancelHandler} type="reset" title="Button cancel submit">Cancel</button>
+                    <button type="submit" title="Button submit person">{personState.id? "Update" : "Create"}</button>
+                </div>
+            </form>
+        </>
 
 }
 

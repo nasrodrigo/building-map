@@ -1,8 +1,14 @@
-import React from 'react';
-import Map from './Map/Map';
+import React from "react";
+import { BrowserRouter, Route } from "react-router-dom";
+import Map from "./Components/Map/Map";
 
-const app = () => {
-    return <Map/>;
+const app: React.FC<{}>  = () => {
+    return <>
+                <BrowserRouter>
+                    <Route path="/" exact component={Map} />;
+                </BrowserRouter>
+            </>
+    
 }
 
 export default app;

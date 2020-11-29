@@ -9,6 +9,7 @@ export default interface Canvas {
     translate?: Coordinate;
 };
 
+// ==== Canvas Mockups ====
 export const canvas: Canvas = {
     width: 0,
     height: 0,

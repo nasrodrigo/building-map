@@ -1,9 +1,0 @@
-.personForm{   
-    display: flex; 
-    align-items: flex-end; 
-    flex-direction: column; 
-    margin: 10px;
-}
-.hideContent{
-    display: none;
-}

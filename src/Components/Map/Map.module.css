@@ -1,4 +1,94 @@
+html, 
+body{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+header{
+    position: fixed;
+    display: flex;
+    flex-direction: row;    
+}
+.searchContainer{
+    display: flex;
+    border: 1px solid #dfe1e5;
+    border-radius: 25px;
+    padding: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.searchContainer input{
+    width: 250px;
+    margin: 0 10px 0 10px;
+    border: none;
+    
+}
+.searchButton{
+    height: 25px;
+    width: auto;
+    border: none;
+    background: rgba(175, 34, 34, 0);
+}
+.searchContainer, 
+.searchContainer input{
+    background: #fafbfc;
+}
+.searchContainer input:focus, 
+.searchButton:focus,
+.buttonZoom button:focus{
+    outline: none;
+}
 .buttonZoom{
+    margin: 20px;
+}
+.icon{
+    color: #464242;
+}
+.buttonZoom button{
+    width: 40px;
+    height: 40px;
+    margin: 6px;
+    border: #ccc 1px solid;
+    border-radius: 25px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 
+        0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
+.buttonZoom p{
+    margin: 9px;
+}
+.hideContent{
+    display: none;
+}
+.options{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1px 15px;
+    padding: 0px;
+    background: #ccc;
+    list-style: none;
+    width: 90%;
+}
+.optionList{
+    border-bottom: #464242 1px solid;
+    padding: 14px;
+    width: 90%;
+}
+.personInfo{   
+    background: whitesmoke;
     display: flex; 
-    margin: 10px
+    align-items: flex-start; 
+    flex-direction: column; 
+    position: fixed;
+    right: 0px;
+    margin: 20px;
+    padding: 15px;
+    border: #ccc 1px solid;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 
+        0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
+.personInfo button{
+    margin: 10px;
 }

@@ -1,6 +1,8 @@
 import React, { useReducer } from 'react';
 
 import classes from "./Map.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import  { faSearchMinus, faSearchPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface Action {
     type: string
@@ -22,14 +24,17 @@ const reducer = (state: any, action: Action) => {
 
 const MapZoom = (props: any) => {
 
+    const searchMinusIcon = <span className={classes.icon}><FontAwesomeIcon icon={faSearchMinus} className="fas fa-2x" /></span>;
+    const searchPlusIcon = <span className={classes.icon}><FontAwesomeIcon icon={faSearchPlus} className="fas fa-2x" /></span>;
+
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    props.zoomHandle(state.scale);
+    props.zoomHandler(state.scale);
 
     return <div className={classes.buttonZoom}>
-            <button onClick={() => dispatch({type: "decrement"})}>-</button>
-            <button onClick={() => dispatch({type: "increment"})}>+</button>
-        </div>
+                <button onClick={() => dispatch({type: "decrement"})}>{searchMinusIcon}</button>
+                <button onClick={() => dispatch({type: "increment"})}>{searchPlusIcon}</button>
+            </div>
 
 }
     
