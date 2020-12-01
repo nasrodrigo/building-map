@@ -91,4 +91,7 @@ header{
 }
 .personInfo button{
     margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    border: #8d8c8c 1px solid;
 }

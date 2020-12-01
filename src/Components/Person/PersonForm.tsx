@@ -27,8 +27,6 @@ const PersonForm = (props: any) => {
 
     const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 
-        console.log(props.person);
-
         for(let key in personState){
             if(key === event.target.name){
                 setPersonState({
@@ -212,12 +210,6 @@ const PersonForm = (props: any) => {
                         placeholder="Phone number" 
                         title="Field phone"/>
                 </div>
-                {/* <div className={classes.hideContent}>
-                    <input name="personId" value={personState.id? personState.id : undefined} readOnly/>
-                    <input name="possitionX" value={personState.possition? personState.possition.x : undefined} readOnly/>
-                    <input name="possitionY" value={personState.possition? personState.possition.y : undefined} readOnly/>
-                    <input name="scale" value={personState.possition? personState.possition.scale : undefined} readOnly/>
-                </div> */}
                 <div>
                     <button onClick={btnCancelHandler} type="reset" title="Button cancel submit">Cancel</button>
                     <button type="submit" title="Button submit person">{personState.id? "Update" : "Create"}</button>

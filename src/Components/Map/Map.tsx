@@ -1,5 +1,5 @@
 import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
-import { useHistory } from "react-router-dom";
+import queryString from 'query-string';
 import Canvas, { canvas } from "../../Interfaces/Canvas";
 import Person, { Coordinate, possition, person } from "../../Interfaces/Person";
 import PersonForm from "../../Components/Person/PersonForm";
@@ -17,19 +17,28 @@ interface DrawMapProps{
     translateY: number
 }
 
+interface User{
+    userName: string,
+    isAdmin: boolean
+}
+
+const user: User = {
+    userName: "",
+    isAdmin: false
+}
+
 const Map = ({ width, height }: Canvas) => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const personFormRef = useRef<HTMLDivElement>(null);
     const personInfoRef = useRef<HTMLDivElement>(null);
 
-    const history = useHistory();
-
     const [canvasState, setCanvasState] = useState<Canvas>(canvas);
     const [personListState, setPersonListState] = useState<Person[]>([]);
     const [possitionState, setPossitionState] = useState<Coordinate>(possition);
     const [personInfoState, setPersonInfoState] = useState<Person>(person);
     const [idToDeleteState, setIdToDeleteState] = useState<string>('');
+    const [userState, setUserState] = useState<User>(user);
     
     const moveCoordinate: Coordinate = possition;
     let mouseDown = false;
@@ -69,7 +78,13 @@ const Map = ({ width, height }: Canvas) => {
     }
 
     useEffect(() => {
-
+        const user = queryString.parse(location.search);
+        setUserState(
+            { 
+                userName: user.userName? user.userName.toString(): "",
+                isAdmin: user.isAdmin === "true"? true : false
+            }
+        );
         getCanvas();
 
     }, []);
@@ -248,7 +263,7 @@ const Map = ({ width, height }: Canvas) => {
             return;
         }
         const canvas: HTMLCanvasElement = canvasRef.current;
-        canvas.addEventListener('dblclick', addPersonHandler);
+        canvas.addEventListener('dblclick', userState.isAdmin? addPersonHandler : () => {});
         return () => {
             canvas.removeEventListener('dblclick', addPersonHandler);
         };
@@ -256,7 +271,7 @@ const Map = ({ width, height }: Canvas) => {
     }, [canvasState]);
 
     const drawSearchResult = (value: string) => {
-        console.log("started drawSearch");
+        
         if(!canvasState.canvas){
             return;
         } 
@@ -265,7 +280,6 @@ const Map = ({ width, height }: Canvas) => {
             return;
         } 
         
-        console.log("verify drawSearch");
         const canvas = canvasState.canvas;
         const context = canvasState.context;
 
@@ -273,7 +287,7 @@ const Map = ({ width, height }: Canvas) => {
             
             if(person.firstName + ' ' + person.lastName === value){
 
-                setPersonInfoState({...person});
+                setPersonInfoState(person);
 
                 const w = markerImg.width / 4;
                 const h = markerImg.height / 4;
@@ -288,12 +302,15 @@ const Map = ({ width, height }: Canvas) => {
 
                 drawMap(drawMapProps);
                 context.drawImage(markerImg, x, y, w, h);
+                showPersonInfo(true);
+
+                return;
 
             }
             
         });
 
-        showPersonInfo(true);
+        
     }
 
     const showFormFilled = () => {
@@ -337,9 +354,9 @@ const Map = ({ width, height }: Canvas) => {
                     <a><b>Contact</b></a>
                     <a>Email: {personInfoState.contact.email}</a>
                     <a>{personInfoState.contact.phone.phoneType + ": " + personInfoState.contact.phone.phoneNumber}</a>
-                    <form onSubmit={removePersonHandler}>
-                        <button type="submit">Remove Person</button>
-                        <button onClick={showFormFilled} type="button">Update Person</button>
+                    <form onSubmit={removePersonHandler} className={userState.isAdmin? "" : classes.hideContent}>
+                        <button type="submit">Remove</button>
+                        <button onClick={showFormFilled} type="button">Update</button>
                     </form>
 
             </div>
