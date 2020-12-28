@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import firebase from "../../firebase";
 
 import classes from "./Login.module.css";
 
-interface Login {
+interface LoginParam {
     userName: string,
     password: string,
     isAdmin?: boolean
 }
 
-const login: Login = {
+const login: LoginParam = {
     userName: "",
     password: "",
     isAdmin: false
@@ -25,7 +25,7 @@ const Login = () => {
 
     const feedbackMessage = useRef<HTMLDivElement>(null);
     
-    const [loginState, setLoginState] = useState<Login>(login);
+    const [loginState, setLoginState] = useState<LoginParam>(login);
     const [feedbackMessageState, setFeedbackMessageState] = useState<FeedbackMessage>({msg: "", color: ""});
 
     const history = useHistory();
@@ -53,7 +53,7 @@ const Login = () => {
             }
 
             let loginData = data.val();
-            let login: Login; 
+            let login: LoginParam; 
             let count: number = 0;
             
             for(const key in loginData){

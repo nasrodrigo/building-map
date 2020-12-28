@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
-import Person, { Contact, Phone, Coordinate, person, contact, possition, phone } from "../../Interfaces/Person";
+import Person, { Contact, Phone, person, contact, phone } from "../../Interfaces/Person";
 import firebase from "../../firebase";
 
 import classes from "./Person.module.css";
