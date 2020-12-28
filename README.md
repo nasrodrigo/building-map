@@ -1,6 +1,6 @@
 # Welcome to the Building Map 🏢🔍
  
-I have been developing this project to serve as a search tool for people inside the buildings of large companies.
+I have been developing this project to serve as a search tool for people inside the companies with a large building.
  
 # What I have done so far 😎🤩
 
@@ -40,6 +40,10 @@ Logging in as a `user`, the user can search for a person, and the map will show 
 
 ## How to input a person on the map?
 With a double click on the location on the map where the person can be found, a form will open in the upper right corner of the screen, the user must fill in this form and submit it, then a new person is inserted and can be found by the bar search. 
+
+### Final considerations 😉👊
+
+I know there is a lot to be done on it, but with what I have done so far, I got my certification from the `ComIT - React course`, so I believe there is some kind of great work on this project.
  
 # Getting Started with Building Map 🚀
 
@@ -87,9 +91,3 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Final considerations 😉👊
-
-I know there is a lot to be done on it, but with what I have done so far, I got my certification from the `ComIT - React course`, so I believe there is some kind of great work on this project.
-
-
