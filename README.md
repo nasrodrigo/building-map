@@ -1,4 +1,5 @@
 # Welcome to the Building Map 🏢🔍
+https://building-map-b9015.web.app/
  
 I have been developing this project to serve as a search tool for people inside the companies with a large building.
  
@@ -33,6 +34,7 @@ To get the query-string params.
 As a mock API, I have used Firebase Realtime Database and also deployed the application to Firebase Hosting. 
 
 # How to use it? 🤔
+https://building-map-b9015.web.app/
 
 ## Permision
 First, the user will find a login page, there are two predefined users `user` and `admin` both with `123` as their password.
