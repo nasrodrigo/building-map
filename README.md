@@ -10,10 +10,13 @@ I am working with HTML Canvas, on a canvas, this is where the map image is drawn
  
 It was started with Crate React App with Typescript template, I installed the following libraries below:
  
-- `@fortawesome/fontawesome-free`
-- `@fortawesome/fontawesome-svg-core`
-- `@fortawesome/free-solid-svg-icons`
-- `@fortawesome/react-fontawesome`
+`@fortawesome/fontawesome-free`
+
+`@fortawesome/fontawesome-svg-core`
+
+`@fortawesome/free-solid-svg-icons`
+
+`@fortawesome/react-fontawesome`
  
 These to use SVG icons in the application.
 
@@ -36,7 +39,7 @@ First, the user will find a login page, there are two predefined users `user` an
 Logging in as a `user`, the user can search for a person, and the map will show where that person can be found in the building, but the user is not allowed to insert a person on the map, on the other hand, as an` admin`, the user is allowed to search and insert people on the map.
 
 ## How to input a person on the map?
-with a double click on the location on the map where the person can be found, a form will open in the upper right corner of the screen, the user must fill in this form and submit it, then a new person is inserted and can be found by the bar search. 
+With a double click on the location on the map where the person can be found, a form will open in the upper right corner of the screen, the user must fill in this form and submit it, then a new person is inserted and can be found by the bar search. 
  
 # Getting Started with Building Map 🚀
 
@@ -88,4 +91,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ### Final considerations 😉👊
 
 I know there is a lot to be done on it, but with what I have done so far, I got my certification from the `ComIT - React course`, so I believe there is some kind of great work on this project.
+
 
