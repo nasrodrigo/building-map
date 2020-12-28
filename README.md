@@ -10,22 +10,22 @@ I am working with HTML Canvas, on a canvas, this is where the map image is drawn
  
 It was started with Crate React App with Typescript template, I installed the following libraries below:
  
-`@fortawesome/fontawesome-free": "^5.15.1`
-`@fortawesome/fontawesome-svg-core": "^1.2.32`
-`@fortawesome/free-solid-svg-icons": "^5.15.1`
-`@fortawesome/react-fontawesome": "^0.1.14`
+- `@fortawesome/fontawesome-free`
+- `@fortawesome/fontawesome-svg-core`
+- `@fortawesome/free-solid-svg-icons`
+- `@fortawesome/react-fontawesome`
  
 These to use SVG icons in the application.
 
-### `react-router-dom`
+`react-router-dom`
 
 To define application routes.
 
-### `query-string`
+`query-string`
 
 To get the query-string params.
  
-### `firebase`
+`firebase`
 
 As a mock API, I have used Firebase Realtime Database and also deployed the application to Firebase Hosting. 
 
