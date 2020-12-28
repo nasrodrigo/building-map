@@ -32,6 +32,11 @@ export interface Coordinate {
 
 }
 
+export interface User{
+    userName: string,
+    isAdmin: boolean
+}
+
 // ==== Person Mockups ====
 export let phone: Phone = {
     phoneNumber: '',
@@ -55,4 +60,9 @@ export let person: Person = {
     lastName: '',
     contact: contact,
     possition: possition,
+};
+
+export let user: User = {
+    userName: "",
+    isAdmin: false
 };

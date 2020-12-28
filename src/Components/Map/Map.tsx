@@ -1,11 +1,12 @@
-import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import queryString from 'query-string';
 import Canvas, { canvas } from "../../Interfaces/Canvas";
-import Person, { Coordinate, possition, person } from "../../Interfaces/Person";
+import Person, { Coordinate, possition, person, User ,user } from "../../Interfaces/Person";
 import PersonForm from "../../Components/Person/PersonForm";
 
 import MapSearch from "./MapSearch";
 import MapZoom from "./MapZoom";
+import MapSignout from "./MapSignout";
 
 import MapImg from "../../img/floor-plant.gif";
 import Marker from '@fortawesome/fontawesome-free/svgs/solid/map-marker-alt.svg';
@@ -15,16 +16,6 @@ interface DrawMapProps{
     scale: number,
     translateX: number,
     translateY: number
-}
-
-interface User{
-    userName: string,
-    isAdmin: boolean
-}
-
-const user: User = {
-    userName: "",
-    isAdmin: false
 }
 
 const Map = ({ width, height }: Canvas) => {
@@ -78,7 +69,7 @@ const Map = ({ width, height }: Canvas) => {
     }
 
     useEffect(() => {
-        const user = queryString.parse(location.search);
+        const user = queryString.parse(window.location.search);
         setUserState(
             { 
                 userName: user.userName? user.userName.toString(): "",
@@ -387,6 +378,7 @@ const Map = ({ width, height }: Canvas) => {
                 <header>
                     <MapSearch formSubmit={drawSearchResult} personList={personListState}/>
                     <MapZoom zoomHandler={zoomHandler}/>
+                    <MapSignout user={userState} setUserState={setUserState}/>
                 </header>
                 <div ref={personFormRef} className={classes.hideContent}>
                     <PersonForm setPersonListState={setPersonListState}
