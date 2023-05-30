@@ -1,31 +1,53 @@
-.personForm{   
-    display: flex; 
-    align-items: flex-end; 
-    flex-direction: column; 
-    position: fixed;
+.personForm {
+    display: flex;
+    /* align-items: center;  */
+    flex-direction: column;
+    /* position: fixed; */
     right: 0px;
 }
-.personForm div {
-    margin-right: 25px;
-}
-.personForm input, 
-.personForm button, 
-.personForm select{
+
+.personForm input,
+.personForm button,
+.personForm select {
     margin: 5px;
     padding: 10px;
     border: #ccc 1px solid;
-    border-radius: 25px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
         0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
-.personForm input:focus, 
-.personForm button:focus, 
-.personForm select:focus{
+
+.personForm input:focus,
+.personForm button:focus,
+.personForm select:focus {
     outline: none;
 }
-.feedbackMessage{
+
+.feedbackMessage {
     display: none;
 }
-.hideContent{
+
+.hideContent {
     display: none;
+}
+
+.formButtonSection {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.personInfo {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    right: 0px;
+    margin: 20px;
+    padding: 15px;
+}
+
+.personInfo button {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    border: #8d8c8c 1px solid;
 }

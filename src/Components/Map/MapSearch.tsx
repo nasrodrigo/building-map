@@ -1,91 +1,61 @@
-import React, { useState, useEffect } from "react";
-import Person from "../../Interfaces/Person";
-
+import React, { useState } from "react";
 import classes from "./Map.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import  { faSearch } from "@fortawesome/free-solid-svg-icons";
+import MapSearchMatch from "./MapSearchMatch";
+import Person from "../../Interfaces/Person";
+import SearchImg from "../../img/search_FILL0_wght400_GRAD0_opsz48.svg";
+import { createImage } from "../../Commons/Utils";
 
 const MapSearch = (props: any) => {
+  const { formSubmit, personList } = props;
 
-    const searchIcon = <span className={classes.icon}><FontAwesomeIcon icon={faSearch} className="fas fa-lg" /></span>;
+  const searchImg: HTMLImageElement = createImage(SearchImg);
+  searchImg.width = 24;
 
-    const [searchInputState, setSearchInputState] = useState<string>("");
-    const [personListState, setPersonListState] = useState<Person[]>([]);
-    
-    let listOptions: string[] = [];
+  const searchIcon = (
+    <span className={classes.icon}>
+      <img alt="Search" src={searchImg.src} width={searchImg.width}/>
+    </span>
+  );
 
-    const listPersonHandler = () => {
+  const [personState, setPersonState] = useState<Person | null>(null);
+  const [searchInputState, setSearchInputState] = useState<string>("");
 
-        props.personList.forEach((person: Person) => {
-            setPersonListState([...personListState, person])
-        });
-    
+  const searchInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInputState(event.target.value);
+  };
+
+  const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    if (personState === null) {
+      return;
     }
+    event.preventDefault();
+    formSubmit(personState);
+  };
 
-    useEffect(() => {
-        
-        listPersonHandler();
-
-    }, [props.personList]);
-
-    const searchInputOptions = () => {
-
-        personListState.forEach((person: Person) =>  {
-            if(!person.firstName){
-                return;
-            } 
-            
-            if(!searchInputState){
-                return;
-            }    
-            
-            if(person.firstName.toLowerCase().indexOf(searchInputState.toLowerCase()) > -1){
-                listOptions.push(person.firstName + " " + person.lastName);
-            }
-            
-        });
-
-        return <ul className={classes.options}>
-            {listOptions.map((optionName: string) => {
-                return (
-                    <li className={classes.optionList} key={optionName} onClick={optionClickHandler}>
-                        {optionName}
-                    </li>
-                );
-            })}
-        </ul>;
-        
-    }
-
-    const optionClickHandler = (event: React.MouseEvent<HTMLLIElement>) => {
-
-        setSearchInputState(event.currentTarget.innerText);
-
-    }
-
-    const searchInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-        setSearchInputState(event.target.value);
-
-    }
-
-    const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
-
-        event.preventDefault();
-        
-        props.formSubmit(searchInputState);
-        
-    }
-
-    return <div>
-            <form onSubmit={formSubmitHandler}>
-                <div className={classes.searchContainer}>
-                    <input autoComplete="off" onChange={searchInputHandler} value={searchInputState} type="text" name="search-input" />
-                    <button type="submit" className={classes.searchButton}>{searchIcon}</button>
-                </div>
-            </form>
-            {searchInputOptions()}
-        </div>;
-}
+  return (
+    <div>
+      <form onSubmit={formSubmitHandler}>
+        <div className={classes.searchContainer}>
+          <input
+            autoComplete="off"
+            onChange={searchInputHandler}
+            value={searchInputState}
+            type="text"
+            name="search-input"
+          />
+          <button type="submit" className={classes.searchButton}>
+            {searchIcon}
+          </button>
+        </div>
+      </form>
+      <MapSearchMatch
+        personList={personList}
+        searchInput={searchInputState}
+        setSearchInput={setSearchInputState}
+        setPersonState={setPersonState}
+      />
+    </div>
+  );
+};
 
 export default MapSearch;

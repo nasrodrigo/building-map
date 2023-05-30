@@ -1,8 +1,9 @@
 import React, { useReducer } from 'react';
 
 import classes from "./Map.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import  { faSearchMinus, faSearchPlus } from "@fortawesome/free-solid-svg-icons";
+import ZoomInImg from "../../img/zoom_in_FILL0_wght400_GRAD0_opsz48.svg";
+import ZoomOutImg from "../../img/zoom_out_FILL0_wght400_GRAD0_opsz48.svg";
+import { createImage } from '../../Commons/Utils';
 
 interface Action {
     type: string
@@ -24,8 +25,11 @@ const reducer = (state: any, action: Action) => {
 
 const MapZoom = (props: any) => {
 
-    const searchMinusIcon = <span className={classes.icon}><FontAwesomeIcon icon={faSearchMinus} className="fas fa-2x" /></span>;
-    const searchPlusIcon = <span className={classes.icon}><FontAwesomeIcon icon={faSearchPlus} className="fas fa-2x" /></span>;
+    const zoomInImg: HTMLImageElement = createImage(ZoomInImg);
+    const zoomOutImg: HTMLImageElement = createImage(ZoomOutImg);
+
+    const searchMinusIcon = <span className={classes.icon}><img alt="Zoom In" src={zoomInImg.src} className="fas fa-2x" /></span>;
+    const searchPlusIcon = <span className={classes.icon}><img alt="Zoom Out" src={zoomOutImg.src} className="fas fa-2x" /></span>;
 
     const [state, dispatch] = useReducer(reducer, initialState);
 

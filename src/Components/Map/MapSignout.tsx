@@ -1,23 +1,23 @@
-import React from 'react';
 import { useHistory } from "react-router-dom";
+import { getLogedUser } from "../../Commons/Utils";
+import classes from "./Map.module.css";
 
-import { user } from "../../Interfaces/Person";
+const MapSignout = () => {
+  const history = useHistory();
+  const user = getLogedUser();
 
-const MapSignout = (props: any) => {
+  const signOutHandler = () => {
+    history.push("/");
+  };
 
-    const history = useHistory();
-
-    const signOutHandler = () => {
-        history.push("/");
-        props.setUserState(user);
-    }
-
-    return <div>
-                <a>What up {props.user.userName}! </a>
-                <button onClick={signOutHandler}>Sing Out</button>
-            </div>
-
-}
-    
+  return (
+    <div className={classes.singout}>
+      <p>What up {user.userName}!</p>
+      <div>
+        <button onClick={signOutHandler}>Sing Out</button>
+      </div>
+    </div>
+  );
+};
 
 export default MapSignout;
