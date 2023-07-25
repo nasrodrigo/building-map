@@ -12,41 +12,35 @@ const Map = () => {
   const [personListState, setPersonListState] = useState<Person[]>([]);
   const [personListUpdated, setPersonListUpdated] = useState<boolean>(false);
   const [personInfoState, setPersonInfoState] = useState<Person>(person);
+  const [showModalPersonForm, setShowModalPersonForm] = useState(false);
+  const [showModalInfo, setShowModalInfo] = useState(false);
 
-  const upadtePersonList = useCallback(() => {
+  const updatePersonList = useCallback(() => {
     getPersonList().then((data) => setPersonListState(data));
     setPersonListUpdated(false);
   }, [setPersonListUpdated]);
 
   useEffect(() => {
-    upadtePersonList();
-  }, [personListUpdated, upadtePersonList]);
+    updatePersonList();
+  }, [personListUpdated, updatePersonList]);
 
   const showFormFilled = () => {
-    hideModalInfo();
-    showModalPersonForm();
+    setShowModalInfo(false);
+    setShowModalPersonForm(true);
+  };
+
+  const showFormEmpty = () => {
+    setPersonInfoState(person);
+    setShowModalPersonForm(true);
   };
 
   const drawSearchResult = (person: Person) => {
     setPersonInfoState(person);
-    showModalInfo();
-  };
-
-  const [showAndHideModalPersonForm, setShowAndHideModalPersonForm] =
-    useState(false);
-
-  const showModalPersonForm = () => {
-    setShowAndHideModalPersonForm(true);
+    setShowModalInfo(true);
   };
 
   const hideModalPersonForm = () => {
-    setShowAndHideModalPersonForm(false);
-  };
-
-  const [showAndHideModalInfo, setShowModalInfo] = useState(false);
-
-  const showModalInfo = () => {
-    setShowModalInfo(true);
+    setShowModalPersonForm(false);
   };
 
   const hideModalInfo = () => {
@@ -60,7 +54,7 @@ const Map = () => {
         <MapSignout />
       </header>
       <Modal
-        show={showAndHideModalPersonForm}
+        show={showModalPersonForm}
         handleClose={hideModalPersonForm}
       >
         <PersonForm
@@ -70,18 +64,17 @@ const Map = () => {
           personUpdate={personInfoState}
         />
       </Modal>
-      <Modal show={showAndHideModalInfo} handleClose={hideModalInfo}>
+      <Modal show={showModalInfo} handleClose={hideModalInfo}>
         <PersonInfo
           personInfoState={personInfoState}
           setPersonInfoState={setPersonInfoState}
           hideModalInfo={hideModalInfo}
           setPersonListUpdated={setPersonListUpdated}
-          showPersonForm={showModalPersonForm}
           showFormFilled={showFormFilled}
         />
       </Modal>
 
-      <MapCanvas actions={{ showPersonForm: showModalPersonForm }} />
+      <MapCanvas showPersonForm={showFormEmpty} />
     </>
   );
 };

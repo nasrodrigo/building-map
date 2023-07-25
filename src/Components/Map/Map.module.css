@@ -29,6 +29,7 @@ header{
     width: auto;
     border: none;
     background: rgba(175, 34, 34, 0);
+    cursor: pointer;
 }
 .searchContainer, 
 .searchContainer input{
@@ -43,7 +44,8 @@ header{
     display: flex;
     flex-direction: column;
     position: fixed;
-    margin: 100px 20px 20px 20px;
+    bottom: 0;
+    margin: 10px 10px;
 }
 .icon{
     color: #464242;
@@ -64,9 +66,9 @@ header{
     width: 1.5rem;
 }
 .hideContent{
-    display: none;
+    display: none !important;
 }
-.matchRow{
+.matchList{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -77,7 +79,7 @@ header{
     cursor: pointer;
     width: 90%;
 }
-.matchList{
+.matchRow{
     border-bottom: #464242 1px solid;
     padding: 14px;
     width: 90%;
@@ -85,7 +87,7 @@ header{
 .singout{
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
 }
 
 .singout button{

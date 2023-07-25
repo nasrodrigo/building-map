@@ -18,7 +18,9 @@ const PersonForm = (props: any) => {
     useState<FeedbackMessage>({ msg: "", color: "" });
 
   useEffect(() => {
-    if (personUpdate.id) setPersonState(personUpdate);
+    personUpdate.id
+      ? setPersonState(personUpdate)
+      : setPersonState(person);
   }, [personUpdate]);
 
   const inputChangeHandler = (

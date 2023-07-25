@@ -28,16 +28,16 @@ const MapZoom = (props: any) => {
     const zoomInImg: HTMLImageElement = createImage(ZoomInImg);
     const zoomOutImg: HTMLImageElement = createImage(ZoomOutImg);
 
-    const searchMinusIcon = <span className={classes.icon}><img alt="Zoom In" src={zoomInImg.src} className="fas fa-2x" /></span>;
-    const searchPlusIcon = <span className={classes.icon}><img alt="Zoom Out" src={zoomOutImg.src} className="fas fa-2x" /></span>;
+    const zoomInIcon = <span className={classes.icon}><img alt="Zoom In" src={zoomInImg.src} className="fas fa-2x" /></span>;
+    const zoomOutIcon = <span className={classes.icon}><img alt="Zoom Out" src={zoomOutImg.src} className="fas fa-2x" /></span>;
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
     props.zoomHandler(state.scale);
 
     return <div className={classes.buttonZoom}>
-                <button onClick={() => dispatch({type: "decrement"})}>{searchMinusIcon}</button>
-                <button onClick={() => dispatch({type: "increment"})}>{searchPlusIcon}</button>
+                <button onClick={() => dispatch({type: "increment"})}>{zoomInIcon}</button>
+                <button onClick={() => dispatch({type: "decrement"})}>{zoomOutIcon}</button>
             </div>
 
 }

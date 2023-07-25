@@ -41,8 +41,8 @@
     align-items: flex-start;
     flex-direction: column;
     right: 0px;
-    margin: 20px;
-    padding: 15px;
+    padding: 1rem;
+    min-width: 200px;
 }
 
 .personInfo button {

@@ -13,24 +13,31 @@ const MapSearch = (props: any) => {
 
   const searchIcon = (
     <span className={classes.icon}>
-      <img alt="Search" src={searchImg.src} width={searchImg.width}/>
+      <img alt="Search" src={searchImg.src} width={searchImg.width} />
     </span>
   );
 
-  const [personState, setPersonState] = useState<Person | null>(null);
   const [searchInputState, setSearchInputState] = useState<string>("");
+  const [showMatchListState, setShowMatchListState] = useState<boolean>(false);
 
   const searchInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputState(event.target.value);
   };
 
   const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
-    if (personState === null) {
-      return;
-    }
     event.preventDefault();
-    formSubmit(personState);
+    setSearchInputState((event.currentTarget[0] as HTMLInputElement).value);
+    const person: Person = personList.find(
+      (person: Person) =>
+        `${person.firstName} ${person.lastName}`?.toUpperCase() ===
+        (event.currentTarget[0] as HTMLInputElement).value.toUpperCase()
+    );
+    person && formSubmit(person);
   };
+
+  const showMatchList = () => {
+    setShowMatchListState(true);
+  }
 
   return (
     <div>
@@ -39,6 +46,7 @@ const MapSearch = (props: any) => {
           <input
             autoComplete="off"
             onChange={searchInputHandler}
+            onClick={showMatchList}
             value={searchInputState}
             type="text"
             name="search-input"
@@ -52,7 +60,9 @@ const MapSearch = (props: any) => {
         personList={personList}
         searchInput={searchInputState}
         setSearchInput={setSearchInputState}
-        setPersonState={setPersonState}
+        formSubmit={formSubmit}
+        showMatchList={showMatchListState}
+        setShowMatchList={setShowMatchListState}
       />
     </div>
   );

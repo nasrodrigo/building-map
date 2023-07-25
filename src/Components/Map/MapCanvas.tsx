@@ -18,7 +18,7 @@ export interface Coordinate {
 }
 
 const MapCanvas = (props: any) => {
-  const {actions} = props;
+  const {showPersonForm} = props;
   const width = window.innerWidth;
   const height = window.innerHeight;
   
@@ -59,8 +59,6 @@ const MapCanvas = (props: any) => {
         imgBase64: "",
       },
     });
-
-    
   };
 
   useEffect(() => {
@@ -108,10 +106,10 @@ const MapCanvas = (props: any) => {
         canvasState,
       });
       setTimeout(() => {
-        actions.showPersonForm();
+        showPersonForm();
       }, 500);
     },
-    [actions, canvasState]
+    [showPersonForm, canvasState]
   );
 
   useEffect(() => {
