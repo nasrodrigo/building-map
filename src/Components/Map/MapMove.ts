@@ -2,23 +2,11 @@ import { drawMap } from "./MapDraw";
 
 let grabAndMoveMap = false;
 
-export const grabDropMap = () => {
+export const grabDropMap = () => { 
     grabAndMoveMap = !grabAndMoveMap;
 };
 
-export const contentPossitionHandler: any = (
-    event: React.MouseEvent<HTMLCanvasElement>,
-    canvasState: any,
-    moveCoordinate: any
-) => {
-    if (!canvasState.translate) {
-        return;
-    }
-    moveCoordinate.x = event.clientX - canvasState.translate.x;
-    moveCoordinate.y = event.clientY - canvasState.translate.y;
-    grabDropMap();
-
-};
+export const dropMap = () => { grabAndMoveMap = false; };
 
 export const contentMoveHandler: any = (
     event: React.MouseEvent<HTMLCanvasElement>,

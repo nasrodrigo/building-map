@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Canvas, { canvas } from "../../Interfaces/Canvas";
 import MapZoom from "./MapZoom";
-import {
-  contentMoveHandler,
-  contentPossitionHandler,
-  grabDropMap,
-} from "./MapMove";
+import { contentMoveHandler, dropMap, grabDropMap } from "./MapMove";
 import { drawMap } from "./MapDraw";
-import { addLocationHandler } from "./MapPinDraw";
+import {
+  addLocationHandler,
+  dropPin,
+  grabDropPin,
+  mapPinDraw,
+  mapPinMoveHandler,
+} from "./MapPinDraw";
 import { getLogedUser } from "../../Commons/Utils";
 
 export interface Coordinate {
@@ -18,12 +20,12 @@ export interface Coordinate {
 }
 
 const MapCanvas = (props: any) => {
-  const {showPersonForm} = props;
+  const { showPersonForm, person, setPerson, personListState } = props;
   const width = window.innerWidth;
   const height = window.innerHeight;
-  
+
   const [canvasState, setCanvasState] = useState<Canvas>(canvas);
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const moveCoordinate: Coordinate = useMemo(
@@ -65,23 +67,45 @@ const MapCanvas = (props: any) => {
     getCanvas();
   }, []);
 
+  const drawPeoplelocations = useCallback(() => {
+    personListState.forEach((person: any) => {
+      if (person.possition.x && person.possition.y) {
+        mapPinDraw({ canvasState, person });
+      }
+    });
+  }, [canvasState, personListState]);
+
+  useEffect(() => {
+    drawPeoplelocations();
+  }, [drawPeoplelocations]);
+
   const zoomHandler = (scale: number) => {
     canvasState.scale = scale;
     drawMap(canvasState);
   };
 
-  const contentPossitionCallback: any = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
-      contentPossitionHandler(event, canvasState, moveCoordinate);
-    },
-    [canvasState, moveCoordinate]
-  );
-
-  const contentMoveCallback: any = useCallback(
+  const contentMove: any = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement>) => {
       contentMoveHandler(event, canvasState, moveCoordinate);
+      mapPinMoveHandler(event, canvasState, moveCoordinate, person);
     },
-    [canvasState, moveCoordinate]
+    [canvasState, moveCoordinate, person]
+  );
+
+  const contentGrabDrop: any = useCallback(
+    () => {
+      grabDropMap();
+      grabDropPin();
+    },
+    []
+  );
+
+  const contentDrop: any = useCallback(
+    () => {
+      dropMap();
+      dropPin();
+    },
+    []
   );
 
   useEffect(() => {
@@ -89,27 +113,31 @@ const MapCanvas = (props: any) => {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("mousedown", contentPossitionCallback);
-    canvas.addEventListener("mousemove", contentMoveCallback);
-    canvas.addEventListener("mouseup", grabDropMap);
+    canvas.addEventListener("mousemove", contentMove);
+    canvas.addEventListener("mousedown", contentGrabDrop);
+    canvas.addEventListener("mouseup", contentGrabDrop);
+    canvas.addEventListener("mouseout", contentDrop);
     return () => {
-      canvas.removeEventListener("mousedown", contentPossitionCallback);
-      canvas.removeEventListener("mousemove", contentMoveCallback);
-      canvas.addEventListener("mouseup", grabDropMap);
+      canvas.removeEventListener("mousemove", contentMove);
+      canvas.removeEventListener("mousedown", contentGrabDrop);
+      canvas.removeEventListener("mouseup", contentGrabDrop);
+      canvas.removeEventListener("mouseout", contentDrop);
     };
-  }, [canvasState, contentPossitionCallback, contentMoveCallback]);
+  }, [canvasState, contentDrop, contentGrabDrop, contentMove]);
 
-  const addLocationCallback = useCallback(
+  const addLocation = useCallback(
     (event: any) => {
       addLocationHandler({
         event,
         canvasState,
+        person,
+        setPerson,
       });
       setTimeout(() => {
         showPersonForm();
       }, 500);
     },
-    [showPersonForm, canvasState]
+    [showPersonForm, canvasState, person, setPerson]
   );
 
   useEffect(() => {
@@ -118,11 +146,11 @@ const MapCanvas = (props: any) => {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("dblclick", addLocationCallback);
+    canvas.addEventListener("dblclick", addLocation);
     return () => {
-      canvas.removeEventListener("dblclick", addLocationCallback);
+      canvas.removeEventListener("dblclick", addLocation);
     };
-  }, [canvasState, addLocationCallback]);
+  }, [canvasState, addLocation]);
 
   return (
     <>
