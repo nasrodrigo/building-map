@@ -47,6 +47,20 @@ export const grabDropPin = () => {
 
 export const dropPin = () => { grabAndMovePin = false; };
 
+export const mapPinPossitionHandler: any = (
+    event: React.MouseEvent<HTMLCanvasElement>,
+    canvasState: any,
+    moveCoordinate: any
+) => {
+    if (!canvasState.translate) {
+        return;
+    }
+    moveCoordinate.x = event.clientX - canvasState.translate.x;
+    moveCoordinate.y = event.clientY - canvasState.translate.y;
+    grabDropPin();
+
+};
+
 export const mapPinMoveHandler: any = (
     event: React.MouseEvent<HTMLCanvasElement>,
     canvasState: any,

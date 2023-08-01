@@ -8,6 +8,20 @@ export const grabDropMap = () => {
 
 export const dropMap = () => { grabAndMoveMap = false; };
 
+export const contentPossitionHandler: any = (
+    event: React.MouseEvent<HTMLCanvasElement>,
+    canvasState: any,
+    moveCoordinate: any
+) => {
+    if (!canvasState.translate) {
+        return;
+    }
+    moveCoordinate.x = event.clientX - canvasState.translate.x;
+    moveCoordinate.y = event.clientY - canvasState.translate.y;
+    grabDropMap();
+
+};
+
 export const contentMoveHandler: any = (
     event: React.MouseEvent<HTMLCanvasElement>,
     canvasState: any,

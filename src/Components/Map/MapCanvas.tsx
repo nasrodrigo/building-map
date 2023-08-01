@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Canvas, { canvas } from "../../Interfaces/Canvas";
 import MapZoom from "./MapZoom";
-import { contentMoveHandler, dropMap, grabDropMap } from "./MapMove";
+import { contentMoveHandler, contentPossitionHandler, dropMap, grabDropMap } from "./MapMove";
 import { drawMap } from "./MapDraw";
 import {
   addLocationHandler,
@@ -9,6 +9,7 @@ import {
   grabDropPin,
   mapPinDraw,
   mapPinMoveHandler,
+  mapPinPossitionHandler,
 } from "./MapPinDraw";
 import { getLogedUser } from "../../Commons/Utils";
 
@@ -84,6 +85,14 @@ const MapCanvas = (props: any) => {
     drawMap(canvasState);
   };
 
+  const contentPossitionUpdate: any = useCallback(
+    (event: React.MouseEvent<HTMLCanvasElement>) => {
+      contentPossitionHandler(event, canvasState, moveCoordinate);
+      mapPinPossitionHandler(event, canvasState, moveCoordinate);
+    },
+    [canvasState, moveCoordinate]
+  );
+
   const contentMove: any = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement>) => {
       contentMoveHandler(event, canvasState, moveCoordinate);
@@ -114,16 +123,16 @@ const MapCanvas = (props: any) => {
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
     canvas.addEventListener("mousemove", contentMove);
-    canvas.addEventListener("mousedown", contentGrabDrop);
+    canvas.addEventListener("mousedown", contentPossitionUpdate);
     canvas.addEventListener("mouseup", contentGrabDrop);
     canvas.addEventListener("mouseout", contentDrop);
     return () => {
       canvas.removeEventListener("mousemove", contentMove);
-      canvas.removeEventListener("mousedown", contentGrabDrop);
+      canvas.removeEventListener("mousedown", contentPossitionUpdate);
       canvas.removeEventListener("mouseup", contentGrabDrop);
       canvas.removeEventListener("mouseout", contentDrop);
     };
-  }, [canvasState, contentDrop, contentGrabDrop, contentMove]);
+  }, [canvasState, contentDrop, contentGrabDrop, contentMove, contentPossitionUpdate]);
 
   const addLocation = useCallback(
     (event: any) => {
