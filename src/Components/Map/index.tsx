@@ -74,7 +74,12 @@ const Map = () => {
         />
       </Modal>
 
-      <MapCanvas showPersonForm={showFormEmpty} setPerson={setPersonInfoState} person={personInfoState} personListState={personListState} />
+      <MapCanvas
+        showPersonForm={showFormEmpty}
+        setPerson={setPersonInfoState}
+        person={personInfoState}
+        personListState={personListState}
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classes from "./Login.module.css";
 import { FeedbackMessage, User } from "../../Interfaces/Login";
 import { getUsers } from "../../Servers/LoginServer";
@@ -15,7 +15,7 @@ const Login = () => {
   const [feedbackMessageState, setFeedbackMessageState] =
     useState<FeedbackMessage>({ msg: "", color: "" });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const inputChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -49,7 +49,7 @@ const Login = () => {
           login.password === loginState.password
         ) {
           setLoginState(login);
-          history.push(
+          navigate(
             "/map?userName=" + login.userName + "&isAdmin=" + login.isAdmin
           );
           return;
@@ -60,7 +60,7 @@ const Login = () => {
 
       if (count === Object.keys(data).length) {
         setFeedbackMessageState({ msg: "User not found", color: "red" });
-        history.push("/");
+        navigate("/");
       }
     });
   };
