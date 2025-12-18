@@ -1,13 +1,13 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getLogedUser } from "../../Commons/Utils";
 import classes from "./Map.module.css";
 
 const MapSignout = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const user = getLogedUser();
 
   const signOutHandler = () => {
-    history.push("/");
+    navigate("/");
   };
 
   return (
