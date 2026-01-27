@@ -5,37 +5,36 @@ import Person, { person } from "../../Interfaces/Person";
 export const addLocationHandler = (props: any) => {
     const { event, canvasState, setPerson } = props;
 
-    if (!canvasState.canvas || !canvasState.context || !canvasState.scale) {
+    if (!canvasState.canvas || !canvasState.context || !canvasState.scale || !canvasState.translate) {
         return;
     }
 
     const addLocationImg: HTMLImageElement = createImage(AddLocationImg);
-
+    
     addLocationImg.onload = () => {
-        const context: CanvasRenderingContext2D = canvasState.context;
-
         const rect = canvasState.canvas?.getBoundingClientRect();
 
         if (!rect) {
             return;
         }
 
+        // mouse position in canvas pixels
         const mouseXPos = event.clientX - rect.left;
         const mouseYPos = event.clientY - rect.top;
 
-        const w = addLocationImg.width / 2;
-        const h = addLocationImg.height / 2;
-        const x = mouseXPos - w / 2;
-        const y = mouseYPos - h;
+        // convert to map-local coordinates (reverse the translate/scale used when drawing the map)
+        const localX = (mouseXPos - canvasState.translate.x) / canvasState.scale;
+        const localY = (mouseYPos - canvasState.translate.y) / canvasState.scale;
 
-        person.possition.x = x;
-        person.possition.y = y;
+        // store map-local coordinates (centered map coordinate system)
+        person.possition.x = localX;
+        person.possition.y = localY;
         person.possition.scale = canvasState.scale;
         person.possition.imgBase64 = AddLocationImg;
 
         setPerson(person);
 
-        context.drawImage(addLocationImg, x, y);
+       drawTransform({ canvasState, addLocationImg, person });
     }
 };
 
@@ -80,22 +79,36 @@ export const mapPinMoveHandler: any = (
 export const mapPinDraw = (props: any) => {
     const { canvasState, person } = props;
 
+    if (!canvasState.context || !canvasState.translate || !canvasState.scale || !canvasState.canvas) {
+        return;
+    }
+
     const addLocationImg: HTMLImageElement = createImage(AddLocationImg);
 
     addLocationImg.onload = () => {
-        const context: CanvasRenderingContext2D = canvasState.context;
-
-        const rect = canvasState.canvas?.getBoundingClientRect();
-
-        if (!rect) {
-            return;
-        }
-
-        const w = addLocationImg.width / 2;
-        const h = addLocationImg.height / 2;
-        const x = person.possition.x > 0 ? person.possition.x : canvasState.translate.x;
-        const y = person.possition.y > 0 ? person.possition.y : canvasState.translate.y;
-
-        context.drawImage(addLocationImg, x, y, w, h);
+        drawTransform({ canvasState, addLocationImg, person });
     }
 };
+
+const drawTransform = (props: any) => {
+    const { canvasState, addLocationImg, person } = props;
+
+    if (!canvasState.context || !canvasState.translate || !canvasState.scale || !canvasState.canvas) {
+        return;
+    }
+
+    const context: CanvasRenderingContext2D = canvasState.context;
+
+    // draw in the same transformed space as the map
+    context.save();
+    context.translate(canvasState.translate.x, canvasState.translate.y);
+    context.scale(canvasState.scale, canvasState.scale);
+
+    const w = addLocationImg.width / 2;
+    const h = addLocationImg.height / 2;
+
+    // person.possition.x/y are map-local coords (set in addLocationHandler)
+    context.drawImage(addLocationImg, person.possition.x - w / 2, person.possition.y - h / 2, w, h);
+
+    context.restore();
+}
